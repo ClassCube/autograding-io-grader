@@ -18,9 +18,23 @@
 | `command` | The main command executed during the test. It receives input via stdin (if provided) and its output is evaluated against `expected-output` based on the `comparison-method`. | Yes |
 | `input` | The input data that will be passed to the command via stdin. | No |
 | `expected-output` | The expected output that the command should print to stdout. | Yes |
-| `comparison-method` | Defines how the stdout output will be compared. Supported values are `included`, `exact`, and `regex`. | Yes |
+| `comparison-method` | Defines how the stdout output will be compared. Supported values are `included`, `exact`, `regex`, and `loose`. | Yes |
 | `timeout` | Duration (in minutes) before the test is terminated. Defaults to 10 minutes with a maximum limit of 6 hours.| No |
 | `max-score` | The maximum amount of points a student can receive for this test.| No |
+
+#### Loose Options
+
+If you're using the `loose` comparison, the following options are available. 
+
+| Option | Description | Default | Required |
+| --- | --- | --- | --- | 
+| `loose-trim` | If true, both sides of each line are trimmed before comparing | false | ➖ |
+| `loose-r-trim` | If true, only the right side of each line is trimmed | false | ➖ |
+| `loose-l-trim` | If true, only the left side of each line is trimmed | false | ➖ |
+| `loose-ignore-blank-lines` | Whether blank lines should be considered when comparing results | true | ➖ |
+| `loose-squash-spaces ` | If true, multiple spaces are squashed down to a single space before comparisons are made | true | ➖ |
+
+
 
 
 ### Outputs
@@ -46,7 +60,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Run Autograding Tests
-      uses: classroom-resources/autograding-io-grader@v1
+      uses: compscirocks/autograding-io-grader@main
       with:
         test-name: 'Test Name'
         command: './bin/shout'
