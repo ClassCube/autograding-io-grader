@@ -4,7 +4,7 @@ const fs = require('fs')
 
 const env = {
   PATH: process.env.PATH,
-  FORCE_COLOR: 'true',
+  FORCE_COLOR: 'false',
   DOTNET_CLI_HOME: '/tmp',
   DOTNET_NOLOGO: 'true',
   HOME: process.env.HOME,
