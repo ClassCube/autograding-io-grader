@@ -1,6 +1,7 @@
 const { execSync } = require('child_process')
 const core = require('@actions/core')
 const fs = require('fs')
+const path = require('path')
 
 const env = {
   PATH: process.env.PATH,
@@ -8,6 +9,25 @@ const env = {
   DOTNET_CLI_HOME: '/tmp',
   DOTNET_NOLOGO: 'true',
   HOME: process.env.HOME,
+}
+
+/**
+ * If `value` is the path to an existing file (resolved relative to the
+ * workspace root), return the contents of that file.  Otherwise return
+ * `value` unchanged so that literal strings still work as before.
+ */
+function resolveFileOrLiteral(value) {
+  if (!value) return value
+  const workspacePath = process.env.GITHUB_WORKSPACE || process.cwd()
+  const candidate = path.isAbsolute(value) ? value : path.join(workspacePath, value)
+  try {
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+      return fs.readFileSync(candidate, 'utf8')
+    }
+  } catch (_) {
+    // If we can't stat the candidate just treat it as a literal value
+  }
+  return value
 }
 
 function getInputs() {
@@ -18,10 +38,10 @@ function getInputs() {
   const command = core.getInput('command', {
     required: true,
   })
-  const input = core.getInput('input').trim()
-  const expectedOutput = core.getInput('expected-output', {
+  const input = resolveFileOrLiteral(core.getInput('input').trim())
+  const expectedOutput = resolveFileOrLiteral(core.getInput('expected-output', {
     required: true,
-  })
+  }))
   const comparisonMethod = core.getInput('comparison-method', {
     required: true,
   })
