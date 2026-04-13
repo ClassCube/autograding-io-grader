@@ -3,6 +3,9 @@
 ### Overview
 **GitHub Classroom IO Grader** is a plugin for GitHub Classroom's Autograder. Use it to ensure student executables output the correct values on tests.
 
+> [!NOTE]
+> This project started out life as the default input output auto grading action for GitHub Classroom and has grown a bit to include features that I felt made it a better tool.
+
 ### Key Features
 - **Automatic Grading**: Test student code submissions and provide immediate feedback.
 - **Customizable Test Setup**: Define pre-test setup commands and specific testing commands.
