@@ -2,6 +2,8 @@ name: Release
 on:
   workflow_dispatch:
   push:
+    branches-ignore:
+      - "releases/**"
 permissions:
   contents: write
   pull-requests: write
@@ -10,14 +12,11 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      # Get environment variables for later
-      - uses: FranzDiebold/github-env-vars-action@v2
-
       - uses: actions/checkout@v4
       - name: Setup Git
         run: |
-          git config --global user.email "ryan@nutt.com"
-          git config --global user.name "Ryan Nutt"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
       - name: Run build
         run: |
           npm install --silent
@@ -26,10 +25,10 @@ jobs:
         run: |
           # Switch to a dedicated release branch so dist/ never lands on the source branch.
           # -f bypasses .gitignore so the built dist/ files are staged normally.
-          git checkout -b releases/${{ env.CI_REF_NAME }}
+          git checkout -b releases/${{ github.ref_name }}
           git add -f dist/
-          git commit -m "Release ${{ env.CI_REF_NAME }}"
-          git push -f origin releases/${{ env.CI_REF_NAME }}
+          git commit -m "Release ${{ github.ref_name }}"
+          git push -f origin releases/${{ github.ref_name }}
       - name: Get version
         id: project-version
         uses: "euberdeveloper/ga-project-version@main"
@@ -37,7 +36,7 @@ jobs:
           package-manager: npm
       - name: Create release
         run: |
-          gh release delete ${{ env.CI_REF_NAME }} -y || echo 'No release to delete'
-          gh release create ${{ env.CI_REF_NAME }} --target releases/${{ env.CI_REF_NAME }} -t ${{ env.CI_REF_NAME }} -n "Release ${{ env.CI_REF_NAME }}"
+          gh release delete ${{ github.ref_name }} -y || echo 'No release to delete'
+          gh release create ${{ github.ref_name }} --target releases/${{ github.ref_name }} -t ${{ github.ref_name }} -n "Release ${{ github.ref_name }}"
         env:
           GH_TOKEN: ${{ github.token }}
